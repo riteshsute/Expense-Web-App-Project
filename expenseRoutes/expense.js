@@ -8,4 +8,6 @@ const router = express.Router();
 
 router.post('/expense/signup', ExpenseController.signUpUser);
 
-module.exports = router
+router.post('/expense/login', ExpenseController.loginUser);
+  
+  module.exports = router;
