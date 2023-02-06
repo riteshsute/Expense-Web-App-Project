@@ -1,4 +1,4 @@
-const User = require('../model/expense');
+const User = require('../model/user');
 const Bcrypt = require('bcrypt')
 
 exports.signUpUser = ( async (req, res) => {
@@ -49,5 +49,4 @@ exports.signUpUser = ( async (req, res) => {
       res.status(500).json({success: false, message: err} )
     }
   })
-  
   

@@ -11,6 +11,7 @@ const cors = require('cors')
 app.use(cors());
 
 const expenseRoutes = require('./expenseRoutes/expense');
+const expenseDetailRoute = require('./expenseRoutes/expenseDetails')
 
 const sequelize = require('./ExpenseUtil/database');
 
@@ -20,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(expenseRoutes);
+app.use(expenseDetailRoute);
 
   
 sequelize
