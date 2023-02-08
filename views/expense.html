@@ -39,8 +39,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 
     <script>
+        axios.defaults.headers.common["Authorization"] = localStorage.getItem("token")
+        ? localStorage.getItem("token")
+        : "";
         function addExpense(event) {
             event.preventDefault();
+            console.log('submit envoked')
+            const token = localStorage.getItem('token');
             const amount = event.target.amount.value;
             const description = event.target.description.value;
             const category =  event.target.category.value;
@@ -50,28 +55,25 @@
                description,
                category
             };
-            console.log(obj);
+            console.log(obj, 'object ');
+            console.log(token)
 
-            axios.post("http://localhost:7000/expense/addExpense", obj)
+            axios.post("http://localhost:7000/expense/addExpense", obj,  {headers: { 'Authorization': token}} )
             .then((response) => {
                     addNewExpense(response.data.showNewExpenseDetail)
                     // alert(response.data.message);
                     location.reload();
             })
-            .catch(err => console.log(err));
-
-            // ((error) => {
-            //     console.log(error);
-            // });
+            .catch(err => console.log(err, 'happend in frontend'));
         }
 
         
 
         window.addEventListener("DOMContentLoaded", async() => {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             try {
-                const res = await axios.get("http://localhost:7000/expense/userExpenses")
-                console.log(res.data.allExpenses, 'in res' )
+                const res = await axios.get("http://localhost:7000/expense/userExpenses", {headers: { 'Authorization': token}})
+                console.log(res.data, 'in res' )
 
                 const expenseData = res.data.allExpenses
                 for(var i=0; i< expenseData.length; i++){
@@ -84,22 +86,45 @@
 
         function addNewExpense(expense){
         const parentNode = document.getElementById('listOfUsers');
+        
 
-        const childHTML = `<li id=${expense.id}> ${expense.amount} - ${expense.description} - ${expense.category}
-                                <button onclick=deleteUser('${expense.id}')> Delete User </button>
+        const childHTML = `<li id=${expense.id}> ${expense.amount} - ${expense.description} - ${expense.category}            
+                            <button onclick=deleteUser('${expense.id}')> Delete User </button>
+                            <button onclick=editUser('${expense.amount}','${expense.description}','${expense.category}','${expense.id}')> Edit User </button>  
                             </li>`
+                            console.log(childHTML, 'here is the child')
 
         parentNode.innerHTML = parentNode.innerHTML + childHTML;
 
-        // const parentNode = document.getElementById('listOfExpenses');
-        // const expenseId = `expense-${expense.id};`
-        // console.log(parentNode, 'parentnode')
-        // parentNode.innerHTML += `<li id=${expenseId.id}> 
-        //                         ${expense.expenseamount} - ${expense.description} - ${expense.category}
-        //                         <button onclick=deleteUser('${expense.id}')> Delete User </button>
-        //                     </li>`
         } 
 
+        async function editUser(amount, description, category, expenseId) {
+
+                document.getElementById('amount').value = amount;
+                document.getElementById('description').value = description;
+                document.getElementById('category').value = category;
+
+                deleteUser(expenseId)
+        }
+
+
+        
+        async function deleteUser(expenseId){
+                try {
+                const resdelete = await axios.delete(`http://localhost:7000/expense/deleteExpense/${expenseId}`)
+                removeUserFromScreen(expenseId)
+                } catch(error) {
+                    console.log(error, 'is in the deleteUserr')
+                }
+            }
+
+            function removeUserFromScreen(expenseId){
+                const parentNode = document.getElementById('listOfUsers');
+                const childNodeToBeDeleted = document.getElementById(expenseId);
+                if(childNodeToBeDeleted) {
+                    parentNode.removeChild(childNodeToBeDeleted)
+                }
+            }
 
     </script>
     </body>

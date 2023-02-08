@@ -19,7 +19,7 @@
             <label> Phone Number </label>
             <input id="phonenumber" type="tel" name="phonenumber" required/>
             <button class="submit-button"> Submit </button>
-            <A Href="C:\Users\HP\Desktop\SharpnerBackEndStart\expensWebAppBackend\views\expenseLogin.html" Class="Btn">login</A>
+            <A Href="C:\Users\HP\Desktop\SharpnerBackEndStart\expensWebAppBackend\views\expenseLogin.html" Class="Btn">Already User - Login</A>
         </form>
     </header>
 
@@ -39,17 +39,19 @@
                 password,
                 phonenumber
             };
-            console.log(obj)
+            console.log(obj);
 
             axios.post("http://localhost:7000/expense/signup", obj)
             .then((response) => {
-                    console.log(response)
+                alert(response.data.message);
+                window.location.href = "../views/expenseLogin.html"
             })
             .catch((error) => {
                 console.log(error);
             });
-            
         }
+
+
     </script>
     </body>
 </html>
