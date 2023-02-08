@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../ExpenseUtil/database');
 
-const ExpenseUser = sequelize.define('expenseUser', {
+const ExpenseUser = sequelize.define('user', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -17,7 +17,7 @@ const ExpenseUser = sequelize.define('expenseUser', {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true
-  },
+  }, 
   password: {
     type: Sequelize.STRING,
     allowNull: false
