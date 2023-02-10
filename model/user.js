@@ -25,7 +25,8 @@ const ExpenseUser = sequelize.define('user', {
   phonenumber: {
     type: Sequelize.DOUBLE,
     allowNull: false
-  }
+  },
+  ispremiumuser: Sequelize.BOOLEAN
 });
 
 module.exports = ExpenseUser;

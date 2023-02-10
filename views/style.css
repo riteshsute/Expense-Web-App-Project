@@ -1,8 +1,8 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(42, 197, 107);
-    /* background-image: url('path/to/your/image.jpg');
-    background-size: cover; */
+    /* background-color: rgb(42, 197, 107); */
+    background-image: url('https://images.pexels.com/photos/53621/calculator-calculation-insurance-finance-53621.jpeg?auto=compress&cs=tinysrgb&w=600');
+    background-size: cover; 
   }
    
   /* .signup-form {
@@ -17,7 +17,8 @@ body {
   } */
   
   .form-group {
-    background-color: white;
+    background-image: linear-gradient(burlywood, rgb(237, 237, 111));
+    background-color: burlywood;
     font-size: 20px;
     text-align: center;
     margin-bottom: 5rem;
@@ -27,7 +28,8 @@ body {
   }
 
   .form-group2 {
-    background-color: white;
+    background-image: linear-gradient(burlywood, rgb(237, 237, 111));
+    background-color: burlywood;
     font-size: 20px;
     text-align: center;
     margin-bottom: 5rem;
@@ -39,11 +41,11 @@ body {
 
   input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"] {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     font-size: 16px;
     text-align: center;
-    border-radius: 5px;
-    border: 3px solid rgb(103, 114, 211);
+    border-radius: 3px;
+    border: 2px solid rgb(103, 114, 211);
     margin-bottom: 1rem;
   }
   
@@ -79,5 +81,10 @@ body {
     background-color: #3e8e41;
   }
 
-
+  .premium-button {
+    background-image: linear-gradient(rgb(131, 205, 217), rgb(237, 237, 111));
+    font-size: 20px;
+    text-align: center;
+    margin-left: 60rem;
+  } 
 
