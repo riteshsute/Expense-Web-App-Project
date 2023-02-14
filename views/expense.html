@@ -6,6 +6,12 @@
             <link rel="stylesheet" href="style.css">
         </head>
 
+
+        <div id="message"></div>
+        <button class="premium-button" id="rzp-button1"> Buy Premium </button>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <div id="leaderboard"></div>
+
         <header class="form-group2">
             <h1 class="expense-form"> Expense </h1>
         <!--  -->
@@ -31,8 +37,6 @@
                 <button class="submit-button"> Submit </button>
             <!-- <A Href="C:\Users\HP\Desktop\SharpnerBackEndStart\expensWebAppBackend\views\expenseLogin.html" Class="Btn">Already User - Login</A> -->
         </form>
-        <button id="rzp-button1"> Buy Premium </button>
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <ul id='listOfUsers'>
             
         </ul>
@@ -70,10 +74,31 @@
             .catch(err => console.log(err, 'happend in frontend'));
         }
 
+        function premiumUserMessage() {
+            document.getElementById('rzp-button1').style.visibility = "hidden"
+            document.getElementById('message').innerHTML =  "YOU ARE A PREMIUM USER"
+        }
         
+
+        function parseJwt (token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        }
 
         window.addEventListener("DOMContentLoaded", async() => {
             const token = localStorage.getItem('token');
+            const decodeToken = parseJwt(token);
+            console.log(decodeToken ,"<<<<???????")
+            const isPremiumUser = decodeToken.ispremiumuser
+            if(isPremiumUser) {
+                premiumUserMessage();
+                showLeaderboard();
+            } 
             try {
                 const res = await axios.get("http://localhost:7000/expense/userExpenses", {headers: { 'Authorization': token}})
                 console.log(res.data, 'in res' )
@@ -121,6 +146,29 @@
                 }
             }
 
+        function showLeaderboard(){
+            const inputElem = document.createElement('input');
+            inputElem.type = "button";
+            inputElem.
+            inputElem.value = "Show Leaderboard";
+            inputElem.onclick = async() => {
+                const token = localStorage.getItem('token')
+                const leaderboardArray = await axios.get("http://localhost:7000/expense/showLeaderBoard", {headers: {'Authorization': token }});
+                console.log(leaderboardArray.data, "<<<<<<leaderboard entries"); 
+
+                
+
+                var leaderBoardElem = document.getElementById("leaderboard");
+                console.log(leaderBoardElem, "<<<<<<<<<<<");
+                leaderBoardElem.innerHTML += `<h1> Leader Board </h1>`
+
+                leaderboardArray.data.forEach((userDetails) => {
+                    leaderBoardElem.innerHTML += `<li> Name - ${userDetails.name} Total Expenses ${userDetails.total_cost}</li>`
+                })
+            }
+            document.getElementById('message').appendChild(inputElem);
+        }
+
             function removeUserFromScreen(expenseId){
                 const parentNode = document.getElementById('listOfUsers');
                 const childNodeToBeDeleted = document.getElementById(expenseId);
@@ -132,19 +180,26 @@
             document.getElementById('rzp-button1').onclick = async function (event) {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:7000/expense/buypremium', { headers: { 'Authorization': token }});
-                console.log(response)
+                console.log(response, "response of premium")
 
                 var options = {
                     "key": response.data.key_id,
                     "order_id": response.data.order.id,
                     
                     "handler": async function (response) {
+                        console.log(options, "<<<<<< here is the options")
                     await axios.post('http://localhost:7000/expense/updatestatus',{
                         order_id: options.order_id,
                         payment_id: response.razorpay_payment_id,
                     }, { headers: {"Authorization": token }})
 
                     alert("you are a premium user now")
+
+                    document.getElementById('rzp-button1').style.visibility = "hidden"
+                    document.getElementById('message').innerHTML =  "YOU ARE A PREMIUM USER"
+                    localStorage.setItem('token', res.data.token)
+                    showLeaderboard();
+                
                     },
                 };
                 const razorpayObj = new Razorpay(options);
@@ -152,10 +207,11 @@
                 event.preventDefault();
 
                 razorpayObj.on('payment.failed', function (response) {
-                    console.log(response);
+                    console.log(response,"<<<<<<<<<");
                     alert('something went wrong');
                 }) 
-            }
+            } 
+
 
     </script>
     </body>
