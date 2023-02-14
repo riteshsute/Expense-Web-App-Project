@@ -13,6 +13,7 @@ app.use(cors());
 const expenseRoutes = require('./expenseRoutes/expense');
 const expenseDetailRoute = require('./expenseRoutes/expenseDetails');
 const purchaseRoutes = require('./expenseRoutes/purchase');
+const leaderboardRoutes = require('./expenseRoutes/feature');
 
 const Expense = require('./model/expense');
 const User = require('./model/user');
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(expenseRoutes);
 app.use(expenseDetailRoute);
 app.use(purchaseRoutes);
+app.use(leaderboardRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User); 

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { name } = require('ejs');
 
 
-exports.signUpUser = ( async (req, res) => {
+const signUpUser = ( async (req, res) => {
     const { name, email, password, phonenumber} = req.body;
     // console.log(userData)
     const existingUser = await User.findOne({ where: { email: email } });
@@ -28,13 +28,15 @@ exports.signUpUser = ( async (req, res) => {
   })
 
 
-  function generateAccessToken(id) {
-    return jwt.sign({ userId: id }, 'D93AA783D5DB71321189EE9971CBDAEB25B5F271CC33EC294D8B84FB6D8D65DD')
-  }
+  const generateAccessToken = (id, name, ispremiumuser) => {
+    return jwt.sign({ userId: id, name: name , ispremiumuser }, 'D93AA783D5DB71321189EE9971CBDAEB25B5F271CC33EC294D8B84FB6D8D65DD');
+  };
 
-  exports.loginUser =  ( async (req, res) => {
+  const loginUser =  ( async (req, res) => {
     try{
-    const { email, password } = req.body;
+    const { email, password, ispremiumuser} = req.body;
+
+    console.log(ispremiumuser)
 
     const user = await User.findAll({ where: { email }})
     console.log(user)
@@ -44,7 +46,7 @@ exports.signUpUser = ( async (req, res) => {
               throw new Error('Something Went Wrong');
             } 
             if(result === true){
-              res.status(200).json({ success: true, message: "User logged in successfully", token: generateAccessToken( user[0].id )});
+              res.status(200).json({ success: true, message: "User logged in successfully", token: generateAccessToken( user[0].id, user[0].name, user[0].ispremiumuser )});
             } else {
               return res.status(400).json({ success: false, message: "Password not matched" });
             }
@@ -57,3 +59,9 @@ exports.signUpUser = ( async (req, res) => {
     }
   })
   
+
+  module.exports = {
+    signUpUser,
+    generateAccessToken,
+    loginUser
+  }
