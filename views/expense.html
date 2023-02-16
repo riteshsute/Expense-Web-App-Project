@@ -162,7 +162,8 @@
                 leaderBoardElem.innerHTML += `<h1> Leader Board </h1>`
 
                 leaderboardArray.data.forEach((userDetails) => {
-                    leaderBoardElem.innerHTML += `<li> Name - ${userDetails.name} Total Expenses ${userDetails.total_cost}</li>`
+                    console.log(userDetails, 'in userDQ')
+                    leaderBoardElem.innerHTML += `<li> Name - ${userDetails.name} Total Expenses ${userDetails.total_expense}</li>`
                 })
             }
             document.getElementById('message').appendChild(inputElem);

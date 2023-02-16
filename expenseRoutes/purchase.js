@@ -10,6 +10,6 @@ const router = express.Router();
 router.get("/expense/buypremium", userAuthentication.autheticate, purchaseController.purchasePremium );
 
 router.post("/expense/updatestatus", userAuthentication.autheticate, purchaseController.updateStatus)
-
+ 
 
 module.exports = router

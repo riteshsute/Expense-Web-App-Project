@@ -36,7 +36,7 @@ const signUpUser = ( async (req, res) => {
     try{
     const { email, password, ispremiumuser} = req.body;
 
-    console.log(ispremiumuser)
+    console.log(ispremiumuser, "in login fun")
 
     const user = await User.findAll({ where: { email }})
     console.log(user)
