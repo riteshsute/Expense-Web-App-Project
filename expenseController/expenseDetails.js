@@ -1,9 +1,11 @@
 const expenseData = require('../model/expense');
 const User = require('../model/user');
+const sequelize = require('../ExpenseUtil/database')
 
 
-exports.addExpense = (async (req, res, next) => {
-        try {
+exports.addExpense = (async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
             if(!req.body.amount){
                 throw new Error('amount is mandatory')
             }
@@ -12,23 +14,25 @@ exports.addExpense = (async (req, res, next) => {
         const Category = req.body.category;
         const userId = req.user.id;
         
-    
-        const data = await expenseData.create( { amount: Amount, description: Description, category: Category, userId: userId } );
-        const userExpenses =  Number(req.user.total_expense) + Number(data.amount)
-        User.update({
+        
+        const data = await expenseData.create( { amount: Amount, description: Description, category: Category, userId: userId }, {transaction: t});
+        const userExpenses =  Number(req.user.total_expense) + Number(data.amount);
+        await User.update({
             total_expense: userExpenses
         }, {
-            where: {id: req.user.id}
+            where: {id: req.user.id},
+            transaction: t
         })
-        res.status(201).json({ showNewExpenseDetail: data})
 
+        await t.commit();
+        res.status(201).json({ showNewExpenseDetail: data});
+        
         } catch(err){
             console.log(err)
-            res.status(500).json({
-                error: err
-            })
-        }
-})
+            await t.rollback();
+            res.status(500).json({ error: err })
+        } 
+    })
 
 
 exports.getExpense = (async (req, res, next) => {

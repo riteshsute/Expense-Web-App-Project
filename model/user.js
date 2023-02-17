@@ -26,8 +26,12 @@ const ExpenseUser = sequelize.define('user', {
     type: Sequelize.DOUBLE,
     allowNull: false
   },
-  ispremiumuser: Sequelize.BOOLEAN
-});
+  ispremiumuser: Sequelize.BOOLEAN, 
+  total_expense: {
+    type: Sequelize.INTEGER,
+    defaultValue : 0
+  }
+});  
 
 module.exports = ExpenseUser;
 
