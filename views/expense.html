@@ -68,6 +68,7 @@
             axios.post("http://localhost:7000/expense/addExpense", obj,  {headers: { 'Authorization': token}} )
             .then((response) => {
                     addNewExpense(response.data.showNewExpenseDetail)
+                    console.log(response.data.showNewExpenseDetail, "show <<<<<<<<")
                     // alert(response.data.message);
                     location.reload();
             })

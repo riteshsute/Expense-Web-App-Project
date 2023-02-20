@@ -14,6 +14,7 @@ const expenseRoutes = require('./expenseRoutes/expense');
 const expenseDetailRoute = require('./expenseRoutes/expenseDetails');
 const purchaseRoutes = require('./expenseRoutes/purchase');
 const leaderboardRoutes = require('./expenseRoutes/feature');
+const forgetPasswordRoutes = require('./expenseRoutes/forgetPassword');
 
 const Expense = require('./model/expense');
 const User = require('./model/user');
@@ -30,6 +31,7 @@ app.use(expenseRoutes);
 app.use(expenseDetailRoute);
 app.use(purchaseRoutes);
 app.use(leaderboardRoutes);
+app.use(forgetPasswordRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User); 

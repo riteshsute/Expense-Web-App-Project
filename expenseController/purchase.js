@@ -9,8 +9,8 @@ const adddemo = expenseController.generateAccessToken
 exports.purchasePremium = (async (req, res) => {
     try{
         var rzp = new Razorpay({
-            key_id: "rzp_test_MJw9fBkmDWxmKo",  
-            key_secret: "rMLES62r94TsKXq7eOPrMywx" 
+            key_id: "",  
+            key_secret: "" 
         })
         // console.log(rzp, 'razorpay data is here')
         const amount  = 1000 

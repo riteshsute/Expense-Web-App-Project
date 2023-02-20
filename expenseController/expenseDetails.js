@@ -36,7 +36,7 @@ exports.addExpense = (async (req, res) => {
 
 
 exports.getExpense = (async (req, res, next) => {
-    console.log('up on the user>>>>>>', req.user.id)
+    
     try{
         // console.log(req.user.id, 'inside on the user')
     const Expense = await expenseData.findAll({ where: {userId: req.user.id }});
@@ -50,14 +50,66 @@ exports.getExpense = (async (req, res, next) => {
 
 
 exports.deleteExpense = (async (req, res, next) => {
+    const t = await sequelize.transaction();
     try{
         const deleteId = req.params.id;
-        console.log(deleteId, 'in the destroy')
+        const userDb = await User.findOne({ where: { id: req.user.id}});
+        console.log(">>>>>>>>>>>", userDb)
+        const userExpenses =  Number(userDb.total_expense) - Number(expenseData.amount);
         await expenseData.destroy({where: { id: deleteId }})
+        console.log(userExpenses, "expensee")
+        await User.update({
+            total_expense: userExpenses
+        }, {
+            where: {id: req.user.id},
+            transaction: t
+        })
+
+        await t.commit();
         res.status(200).json({success: true})
+
     }
     catch(err) {
+        console.log(err)
+        await t.rollback();
        return res.status(400).json({error: 'id is missing'})
     }
 })
+
+
+
+// const t = await sequelize.transaction();
+//     try {
+//         const deleteId = req.params.id;
+//         const expense = await expenseData.findOne({ where: { id: deleteId } });
+        
+//         if (!expense) {
+//             throw new Error('Expense not found');
+//         }
+//         console.log(req.user, " in data ")
+//         const user = await User.findOne({ where: { id: req.user.id } });
+
+//         if (!user) {
+//             throw new Error('User not found');
+//         }
+
+//         const userDeletedExpenses = Number(user.total_expense) - Number(expense.amount);
+
+//         await expenseData.destroy({ where: { id: deleteId } });
+
+//         await User.update(
+//             { total_expense: userDeletedExpenses },
+//             { where: { id: user.id }, transaction: t }
+//         );
+
+//         await t.commit();
+//         res.status(200).json({ success: true });
+//     } catch (err) {
+//         console.log(err); 
+//         await t.rollback();
+//         return res.status(400).json({ error: err.message });
+//     }
+// })
+// )
+
 

@@ -37,6 +37,17 @@ body {
     margin-right: 30rem;
     margin-top: 5rem;
   }
+
+  .forgetPassword-form {
+    background-image: linear-gradient(burlywood, rgb(237, 237, 111));
+    background-color: burlywood;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 5rem;
+    margin-left: 30rem;
+    margin-right: 30rem;
+    margin-top: 5rem;
+  }
   
 
   input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"] {
@@ -88,3 +99,5 @@ body {
     margin-left: 60rem;
   } 
 
+
+  
