@@ -13,9 +13,10 @@ exports.addExpense = (async (req, res) => {
         const Description = req.body.description;
         const Category = req.body.category;
         const userId = req.user.id;
-        
+         
         
         const data = await expenseData.create( { amount: Amount, description: Description, category: Category, userId: userId }, {transaction: t});
+        console.log(req.user.total_expense, "kajdbfdabf")
         const userExpenses =  Number(req.user.total_expense) + Number(data.amount);
         await User.update({
             total_expense: userExpenses
@@ -49,22 +50,23 @@ exports.getExpense = (async (req, res, next) => {
 })
 
 
-exports.deleteExpense = (async (req, res, next) => {
+exports.deleteExpense = (async (req, res) => {
     const t = await sequelize.transaction();
     try{
         const deleteId = req.params.id;
+        const expense = await expenseData.findOne({ where: {id: deleteId}})
         const userDb = await User.findOne({ where: { id: req.user.id}});
-        console.log(">>>>>>>>>>>", userDb)
-        const userExpenses =  Number(userDb.total_expense) - Number(expenseData.amount);
-        await expenseData.destroy({where: { id: deleteId }})
-        console.log(userExpenses, "expensee")
+
+        const userExpenses =  Number(userDb.total_expense) - Number(expense.amount);
+        console.log(userExpenses, " minus expense ")
+
         await User.update({
             total_expense: userExpenses
         }, {
             where: {id: req.user.id},
             transaction: t
         })
-
+        await expenseData.destroy({where: { id: deleteId }})
         await t.commit();
         res.status(200).json({success: true})
 

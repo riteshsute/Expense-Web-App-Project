@@ -139,10 +139,13 @@
 
         
         async function deleteUser(expenseId){
-                try {
-                const resdelete = await axios.delete(`http://localhost:7000/expense/deleteExpense/${expenseId}`)
+            try {
+                const token = localStorage.getItem('token');
+                const resdelete = await axios.delete(`http://localhost:7000/expense/deleteExpense/${expenseId}`, { headers: {"Authorization" : token} })
+                
                 removeUserFromScreen(expenseId)
-                } catch(error) {
+                } 
+                catch(error) {
                     console.log(error, 'is in the deleteUserr')
                 }
             }
