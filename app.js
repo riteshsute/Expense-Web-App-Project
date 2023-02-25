@@ -19,6 +19,7 @@ const forgetPasswordRoutes = require('./expenseRoutes/forgetPassword');
 const Expense = require('./model/expense');
 const User = require('./model/user');
 const Order = require('./model/orders');
+const forgetPasswordRequest = require('./model/forgetPassword')
 
 const sequelize = require('./ExpenseUtil/database');
 
@@ -31,7 +32,7 @@ app.use(expenseRoutes);
 app.use(expenseDetailRoute);
 app.use(purchaseRoutes);
 app.use(leaderboardRoutes);
-app.use(forgetPasswordRoutes);
+app.use('/password', forgetPasswordRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User); 
@@ -39,12 +40,15 @@ Expense.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
+User.hasMany(forgetPasswordRequest);
+forgetPasswordRequest.belongsTo(User);
+
  
    
 sequelize
 //   .sync({ force: true })
-    .sync()
-    .then(result => {
+    .sync() 
+    .then(result => { 
         app.listen(7000);
     })
     .catch(err => console.log(err));
