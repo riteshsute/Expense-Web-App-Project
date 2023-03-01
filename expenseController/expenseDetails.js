@@ -1,9 +1,34 @@
 const expenseData = require('../model/expense');
 const User = require('../model/user');
-const sequelize = require('../ExpenseUtil/database')
+const sequelize = require('../ExpenseUtil/database');
+const AWS =  require('aws-sdk');
+const UserServices = require('../services/userservices');
+const S3Services = require('../services/S3Services');
+const downloadedFilesDb = require('../model/filesDownloaded')
 
 
-exports.addExpense = (async (req, res) => {
+const downloadExpenses = async (req, res) => {
+    try {
+        const expenses = await UserServices.getExpenses(req);
+        // console.log(expenses)
+        const stringifiedExpenses = JSON.stringify(expenses);
+        const userId = req.user.id;
+        const fileName = `Expense${userId}/${new Date()}.txt`
+        const fileURL = await S3Services.uploadToS3(stringifiedExpenses, fileName);
+
+        const filesDownloaded =  await downloadedFilesDb.create({fileURL: fileURL, userId})
+        res.status(201).json({ fileURL, success: true})
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: err })
+    }
+ }
+
+    
+
+
+const addExpense = (async (req, res) => {
     const t = await sequelize.transaction();
     try {
             if(!req.body.amount){
@@ -36,7 +61,7 @@ exports.addExpense = (async (req, res) => {
     })
 
 
-exports.getExpense = (async (req, res, next) => {
+const getExpense = (async (req, res, next) => {
     
     try{
         // console.log(req.user.id, 'inside on the user')
@@ -50,7 +75,7 @@ exports.getExpense = (async (req, res, next) => {
 })
 
 
-exports.deleteExpense = (async (req, res) => {
+const deleteExpense = (async (req, res) => {
     const t = await sequelize.transaction();
     try{
         const deleteId = req.params.id;
@@ -78,6 +103,13 @@ exports.deleteExpense = (async (req, res) => {
     }
 })
 
+
+module.exports = {
+    addExpense,
+    getExpense,
+    deleteExpense,
+    downloadExpenses
+}
 
 
 // const t = await sequelize.transaction();

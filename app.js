@@ -19,7 +19,8 @@ const forgetPasswordRoutes = require('./expenseRoutes/forgetPassword');
 const Expense = require('./model/expense');
 const User = require('./model/user');
 const Order = require('./model/orders');
-const forgetPasswordRequest = require('./model/forgetPassword')
+const forgetPasswordRequest = require('./model/forgetPassword');
+const filesDownloaded = require('./model/filesDownloaded');
 
 const sequelize = require('./ExpenseUtil/database');
 
@@ -34,6 +35,7 @@ app.use(purchaseRoutes);
 app.use(leaderboardRoutes);
 app.use('/password', forgetPasswordRoutes);
 
+
 User.hasMany(Expense);
 Expense.belongsTo(User); 
 
@@ -43,6 +45,8 @@ Order.belongsTo(User);
 User.hasMany(forgetPasswordRequest);
 forgetPasswordRequest.belongsTo(User);
 
+User.hasMany(filesDownloaded);
+filesDownloaded.belongsTo(User);
  
    
 sequelize

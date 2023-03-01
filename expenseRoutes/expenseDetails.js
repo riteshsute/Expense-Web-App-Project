@@ -13,6 +13,8 @@ const router = express.Router();
 router.post("/expense/addExpense", userAuthentication.autheticate, ExpenseController.addExpense);
 
 router.get("/expense/userExpenses", userAuthentication.autheticate, ExpenseController.getExpense);
+
+router.get('/expense/download', userAuthentication.autheticate,  ExpenseController.downloadExpenses)
   
 router.delete("/expense/deleteExpense/:id", userAuthentication.autheticate, ExpenseController.deleteExpense);
 
