@@ -49,7 +49,7 @@ exports.updateStatus = (async (req, res) => {
 
         
         Promise.all([promise, promise1]).then(() => {
-            return res.status(202).json({ sucess: true, message: "TRANSCATION SUCCESSFUL", token: expenseController.generateAccessToken(userId,undefined, true)});
+            return res.status(202).json({ sucess: true, message: "TRANSCATION SUCCESSFUL", token: expenseController.generateAccessToken(userId,undefined , true)});
         }).catch((error) => {
             throw new Error(error);
         })

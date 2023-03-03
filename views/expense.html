@@ -11,6 +11,8 @@
         <button class="premium-button" id="rzp-button1"> Buy Premium </button>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <div id="leaderboard"></div>
+        <ul id="files-list"></ul>
+        <button id="pagination"></button>
 
         <header class="form-group2">
             <h1 class="expense-form"> Expense </h1>
@@ -42,6 +44,7 @@
         </ul>
 
         <button onclick="download()" id="downloadexpense">Download File</button>
+
 
     </header> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
@@ -174,7 +177,7 @@
             document.getElementById('message').appendChild(inputElem);
         }
 
-            function removeUserFromScreen(expenseId){
+         function removeUserFromScreen(expenseId){
                 const parentNode = document.getElementById('listOfUsers');
                 const childNodeToBeDeleted = document.getElementById(expenseId);
                 if(childNodeToBeDeleted) {
@@ -182,20 +185,59 @@
                 }
             }
 
-            function download() {
+        function download(page = 1, limit = 10) {
             const token = localStorage.getItem('token');
 
-            axios.get('http://localhost:7000/expense/download', { headers: {"Authorization" : token} })
-            .then((response) => {
-                if(response.status === 201){
-                    var a = document.createElement("a");
-                    a.href = response.data.fileURL;
-                    a.download = 'myexpense.csv';
-                    a.click();
+        axios.get(`http://localhost:7000/expense/download?page=${page}&limit=${limit}`, { headers: {"Authorization" : token} })
+        .then((response) => {
+            if(response.status === 201){
+                var a = document.createElement("a");
+                a.href = response.data.fileURL;
+                a.download = 'myexpense.csv';
+                a.click();
+
+                const filesDownloaded = response.data.DownloadedFilesUrl;
+                console.log(filesDownloaded, '>>><<><>>')
+                const filesList = document.getElementById('files-list');
+                filesList.innerHTML = '';
+
+                if(Array.isArray(filesDownloaded.filesDb)) {
+                    filesDownloaded.filesDb.forEach((file) => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = file.fileURL;
+                    link.textContent = `Downloaded on ${new Date(file.createdAt).toLocaleString()}`;
+
+                    listItem.appendChild(link);
+                    filesList.appendChild(listItem);
+
+                    
+                    });
+                }
+
+                const pagination =  document.getElementById('pagination');
+                pagination.innerHTML = '';
+
+                console.log(filesDownloaded.totalPages, '{{{{{{{{{{}}}}}}}}}}')
+                for(let i = 1; i <= filesDownloaded.totalPages; i++) {
+                    const link = document.createElement('a');
+                    link.href = `#`;
+                    link.textContent = i;
+                    
+                    if(i === filesDownloaded.currentPage) {
+                        link.classList.add('active');
+                    }
+
+                    link.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        download(i, limit);
+                    });
+
+                    pagination.appendChild(link);
+                }
                 } else {
                     throw new Error(response.data.message)
                 }
-
             })
             .catch((err) => {
                 console.log(err)
@@ -212,19 +254,19 @@
                     "order_id": response.data.order.id,
                     
                     "handler": async function (response) {
-                        console.log(options, "<<<<<< here is the options")
                     await axios.post('http://localhost:7000/expense/updatestatus',{
                         order_id: options.order_id,
                         payment_id: response.razorpay_payment_id,
-                    }, { headers: {"Authorization": token }})
-
+                    }, { headers: {"Authorization": token }}).then((res) => {
                     alert("you are a premium user now")
-
                     document.getElementById('rzp-button1').style.visibility = "hidden"
                     document.getElementById('message').innerHTML =  "YOU ARE A PREMIUM USER"
                     localStorage.setItem('token', res.data.token)
+
                     showLeaderboard();
-                
+                }).catch((err) => {
+                    console.log(err)
+                })
                     },
                 };
                 const razorpayObj = new Razorpay(options);

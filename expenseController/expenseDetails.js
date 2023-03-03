@@ -2,27 +2,53 @@ const expenseData = require('../model/expense');
 const User = require('../model/user');
 const sequelize = require('../ExpenseUtil/database');
 const AWS =  require('aws-sdk');
-const UserServices = require('../services/userservices');
-const S3Services = require('../services/S3Services');
-const downloadedFilesDb = require('../model/filesDownloaded')
+const UserServices = require('../services.js/userservices');
+const S3Services = require('../services.js/S3Services');
+const downloadedFilesDb = require('../model/filesDownloaded');
+const { NULL } = require('mysql2/lib/constants/types');
 
 
 const downloadExpenses = async (req, res) => {
     try {
-        const expenses = await UserServices.getExpenses(req);
-        // console.log(expenses)
-        const stringifiedExpenses = JSON.stringify(expenses);
         const userId = req.user.id;
+        const ispremimum = req.user.ispremiumuser;
+        const ispremiumuser = await User.findOne({where: {ispremiumuser: true}})
+        if(!ispremiumuser) {
+            return res.status(401).json({success: false, message: 'unauthorised' })
+        }
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const expenses = await UserServices.getExpenses(req);
+        const stringifiedExpenses = JSON.stringify(expenses);
         const fileName = `Expense${userId}/${new Date()}.txt`
         const fileURL = await S3Services.uploadToS3(stringifiedExpenses, fileName);
-
-        const filesDownloaded =  await downloadedFilesDb.create({fileURL: fileURL, userId})
-        res.status(201).json({ fileURL, success: true})
+        const savingDownloadedFiles =  await downloadedFilesDb.create({fileURL: fileURL, userId})
+        const fsDownloads  = await downloadedFilesDb.findAndCountAll({
+            where: {
+                userId: userId
+            },
+            offset: startIndex,
+            limit: limit,
+            order: [['createdAt', 'DESC']]
+        });
+        const totalPages = Math.ceil(fsDownloads.count / limit);
+        const DownloadedFilesUrl = {
+            fileURL,
+            success: true,
+            filesDb: fsDownloads.rows,
+            totalPages: totalPages,
+            currentPage: page
+        };
+        
+        res.status(201).json({ fileURL, success: true, DownloadedFilesUrl})
     }
     catch (err) {
         console.log(err);
         res.status(500).json({ success: false, error: err })
-    }
+    } 
  }
 
     
