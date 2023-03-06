@@ -192,7 +192,7 @@
                 }
             }
 
-        function download(page = 1, limit = linksPerPage.value) {
+        function download(page = 1, limit = localStorage.getItem('limit') || linksPerPage.value) {
             const token = localStorage.getItem('token');
 
         axios.get(`http://localhost:7000/expense/download?page=${page}&limit=${limit}`, { headers: {"Authorization" : token} })
@@ -240,6 +240,9 @@
 
                     pagination.appendChild(link);
                 }
+
+                localStorage.setItem('limit', limit);
+
                 } else {
                     throw new Error(response.data.message)
                 }
