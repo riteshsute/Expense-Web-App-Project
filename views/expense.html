@@ -12,7 +12,14 @@
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <div id="leaderboard"></div>
         <ul id="files-list"></ul>
-        <button id="pagination"></button>
+        <label for="linksPerPage">Links per page:</label>
+            <select id="linksPerPage" name="linksPerPage">
+                <option value="5" selected>5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        <div id="pagination"></div>
 
         <header class="form-group2">
             <h1 class="expense-form"> Expense </h1>
@@ -185,7 +192,7 @@
                 }
             }
 
-        function download(page = 1, limit = 10) {
+        function download(page = 1, limit = linksPerPage.value) {
             const token = localStorage.getItem('token');
 
         axios.get(`http://localhost:7000/expense/download?page=${page}&limit=${limit}`, { headers: {"Authorization" : token} })
@@ -201,7 +208,7 @@
                 const filesList = document.getElementById('files-list');
                 filesList.innerHTML = '';
 
-                if(Array.isArray(filesDownloaded.filesDb)) {
+                
                     filesDownloaded.filesDb.forEach((file) => {
                     const listItem = document.createElement('li');
                     const link = document.createElement('a');
@@ -210,10 +217,8 @@
 
                     listItem.appendChild(link);
                     filesList.appendChild(listItem);
-
-                    
-                    });
-                }
+                });
+        
 
                 const pagination =  document.getElementById('pagination');
                 pagination.innerHTML = '';
