@@ -2,9 +2,17 @@ const path = require('path');
 
 const express = require('express');
 
+const fs = require('fs')
+
 const bodyParser = require('body-parser');
 
 const app = express()
+
+const helmet = require('helmet')
+
+const compression = require('compression');
+
+const morgan = require('morgan');
 
 const cors = require('cors')
 
@@ -27,8 +35,16 @@ const sequelize = require('./ExpenseUtil/database');
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'),
+    { flags: 'a' }
+);
 
+console.log('its demo')
 
+app.use(morgan('combined', { stream: accessLogStream}))
+app.use(helmet());
+app.use(compression());
 app.use(expenseRoutes);
 app.use(expenseDetailRoute);
 app.use(purchaseRoutes);
@@ -53,6 +69,6 @@ sequelize
 //   .sync({ force: true })
     .sync() 
     .then(result => { 
-        app.listen(7000);
+        app.listen(process.env.PORT || 7000);
     })
     .catch(err => console.log(err));

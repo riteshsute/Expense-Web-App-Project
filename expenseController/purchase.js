@@ -3,14 +3,15 @@ const Razorpay = require('razorpay');
 const Order = require('../model/orders');
 const User = require('../model/user')
 const expenseController = require('../expenseController/expense');
+require('dotenv').config();
 
 const adddemo = expenseController.generateAccessToken
   
 exports.purchasePremium = (async (req, res) => {
     try{
         var rzp = new Razorpay({
-            key_id: "",  
-            key_secret: "" 
+            key_id: process.env.RAZORPAY_KEY_ID,  
+            key_secret: process.env.RAZORPAY_KEY_SECRET 
         })
         // console.log(rzp, 'razorpay data is here')
         const amount  = 1000 
@@ -41,14 +42,19 @@ exports.updateStatus = (async (req, res) => {
         const userId = req.user.id;
         const { payment_id, order_id, ispremiumuser} = req.body;
         const order = await Order.findOne({ where: { orderid: order_id}});
-        const promise = order.update({ paymentid: payment_id, status:"SUCCESSFUL" })
-        const promise1 = req.user.update({ ispremiumuser: true})
+        console.log(ispremiumuser, "))))))))))))")
+        let promise;
 
-        // const promise2 = order.update({ paymentid: payment_id, status:"FAILED" })
-        // const promise3 = req.user.update({ ispremiumuser: false})
+        if (ispremiumuser) {
+            promise = order.update({ paymentid: payment_id, status:"SUCCESSFUL" });
+            req.user.update({ ispremiumuser: true});
+        } else {
+            promise = order.update({ paymentid: payment_id, status:"FAILED" });
+            req.user.update({ ispremiumuser: false});
+        }
 
         
-        Promise.all([promise, promise1]).then(() => {
+        Promise.all([promise]).then(() => {
             return res.status(202).json({ sucess: true, message: "TRANSCATION SUCCESSFUL", token: expenseController.generateAccessToken(userId,undefined , true)});
         }).catch((error) => {
             throw new Error(error);

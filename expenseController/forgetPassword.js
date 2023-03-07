@@ -4,9 +4,10 @@ const Sib = require('sib-api-v3-sdk');
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
+require('dotenv').config();
 
 const generateAccessToken = (id, name, ispremiumuser) => {
-    return jwt.sign({ userId: id, name: name , ispremiumuser }, 'D93AA783D5DB71321189EE9971CBDAEB25B5F271CC33EC294D8B84FB6D8D65DD');
+    return jwt.sign({ userId: id, name: name , ispremiumuser }, process.env.TOKEN_SECRET);
   };
 
 exports.forgetPassword = async(req, res) => {
