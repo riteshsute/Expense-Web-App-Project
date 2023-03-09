@@ -8,6 +8,9 @@ const bodyParser = require('body-parser');
 
 const app = express()
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 const helmet = require('helmet')
 
 const compression = require('compression');
