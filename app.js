@@ -19,7 +19,7 @@ const morgan = require('morgan');
 
 const cors = require('cors')
 
-app.use(cors());
+app.use(cors()); 
 
 const expenseRoutes = require('./expenseRoutes/expense');
 const expenseDetailRoute = require('./expenseRoutes/expenseDetails');
