@@ -6,10 +6,10 @@ const fs = require('fs')
 
 const bodyParser = require('body-parser');
 
-const app = express()
-
 const dotenv = require('dotenv');
 dotenv.config();
+
+const app = express()
 
 const helmet = require('helmet')
 
@@ -37,13 +37,11 @@ const sequelize = require('./ExpenseUtil/database');
 
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-const accessLogStream = fs.createWriteStream(
-    path.join(__dirname, 'access.log'),
-    { flags: 'a' }
+    
+const accessLogStream = fs.createWriteStream(  
+    path.join(__dirname, 'access.log'), 
+    { flags: 'a' }  
 );
-
-console.log('its demo')
 
 app.use(morgan('combined', { stream: accessLogStream}))
 app.use(helmet());
@@ -51,10 +49,14 @@ app.use(compression());
 app.use(expenseRoutes);
 app.use(expenseDetailRoute);
 app.use(purchaseRoutes);
-app.use(leaderboardRoutes);
-app.use('/password', forgetPasswordRoutes);
+app.use(leaderboardRoutes); 
+app.use('/password', forgetPasswordRoutes); 
 
-
+app.use((req, res) => {
+  console.log('urrrlll', req.url);
+  res.sendFile(path.join(__dirname, `public/${req.url}`)); 
+}); 
+ 
 User.hasMany(Expense);
 Expense.belongsTo(User); 
 
@@ -69,9 +71,9 @@ filesDownloaded.belongsTo(User);
  
    
 sequelize
-//   .sync({ force: true })
+//   .sync({ force: true })   
     .sync() 
     .then(result => { 
         app.listen(process.env.PORT || 7000);
-    })
-    .catch(err => console.log(err));
+    }) 
+    .catch(err => console.log(err));  

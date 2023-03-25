@@ -1,0 +1,61 @@
+<html>
+    <body>
+        
+        <head> 
+            <title> Daily Expense </title>
+            <link rel="stylesheet" href="../style.css">
+        </head>
+
+
+        <div id="message"></div>
+        <button class="premium-button" id="rzp-button1"> Buy Premium </button>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <div id="leaderboard"></div>
+        <ul id="files-list"></ul>
+        <label for="linksPerPage">Links per page:</label>
+            <select id="linksPerPage" name="linksPerPage">
+                <option value="5" selected>5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        <div id="pagination"></div>
+
+        <header class="form-group2">
+            <h1 class="expense-form"> Expense </h1>
+        <!--  -->
+        <form onsubmit="addExpense(event)">
+            <label> Amount: </label>
+            <br>
+            <input id="amount" type="number" name="amount" style="width: 20rem; height: 2rem" required> </input>
+            <br>
+            <label> Description: </label>
+            <br>
+            <input id="description" type="text" name="description" style="width: 20rem; height: 2rem" required> </input>
+            <br>
+            <label for="category"> Choose a option:</label>
+                <select name="category" id="category" style="width: 5rem; height: 2rem" >
+                    <optgroup label="Choose">
+                    <option value="Movie">Fuel</option>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Other">Other</option>
+                    </optgroup>
+                </select>
+                <button class="submit-button"> Submit </button>
+            <!-- <A Href="C:\Users\HP\Desktop\SharpnerBackEndStart\expensWebAppBackend\views\expenseLogin.html" Class="Btn">Already User - Login</A> -->
+        </form>
+        <ul id='listOfUsers'>
+            
+        </ul>
+
+        <button onclick="download()" id="downloadexpense">Download File</button>
+
+
+    </header> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
+    <script src="./expense.js"> </script>
+    </body>
+</html>
