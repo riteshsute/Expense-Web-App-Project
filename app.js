@@ -53,7 +53,6 @@ app.use(leaderboardRoutes);
 app.use('/password', forgetPasswordRoutes); 
 
 app.use((req, res) => {
-  console.log('urrrlll', req.url);
   res.sendFile(path.join(__dirname, `public/${req.url}`)); 
 }); 
  
